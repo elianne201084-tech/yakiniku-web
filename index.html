@@ -5,211 +5,339 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Yakiniku | Hamburguesas al carbón en Lago Agrio</title>
 <meta name="description" content="Yakiniku: hamburguesas al carbón en Lago Agrio. Pide por WhatsApp.">
-<meta name="theme-color" content="#0d0b0a">
+<meta name="theme-color" content="#0b0908">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #0d0b0a;
-    --card: #1a1512;
-    --line: #2e2520;
-    --text: #f5ede6;
-    --muted: #b3a498;
+    --bg: #0b0908;
+    --bg2: #120e0c;
+    --card: #1a1411;
+    --line: #2f2520;
+    --text: #f6eee7;
+    --muted: #b5a699;
     --fire: #ff4d1c;
+    --ember: #ff7a1a;
     --gold: #ffb627;
     --wa: #25d366;
+    --display: "Bebas Neue", Impact, "Arial Narrow", sans-serif;
+    --body: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  html { scroll-behavior: smooth; }
+  html { scroll-behavior: smooth; scroll-padding-top: 70px; }
   body {
     background: var(--bg);
     color: var(--text);
-    font-family: "Segoe UI", system-ui, -apple-system, Roboto, sans-serif;
-    line-height: 1.55;
+    font-family: var(--body);
+    line-height: 1.6;
     -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
   }
+  a { color: inherit; }
+  .wrap { max-width: 1040px; margin: 0 auto; padding: 0 20px; }
+
+  /* NAV */
+  nav {
+    position: sticky; top: 0; z-index: 20;
+    background: rgba(11,9,8,.85);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line);
+  }
+  nav .wrap { display: flex; align-items: center; justify-content: space-between; height: 58px; }
+  .logo { font-family: var(--display); font-size: 1.7rem; letter-spacing: .08em; color: var(--gold); text-decoration: none; }
+  nav .links { display: flex; align-items: center; gap: 18px; font-size: .9rem; font-weight: 500; }
+  nav .links a { text-decoration: none; color: var(--muted); }
+  nav .links a:hover { color: var(--text); }
+  nav .pill { background: var(--wa); color: #04210d !important; padding: 8px 16px; border-radius: 999px; font-weight: 700; }
+  @media (max-width: 520px) { nav .links a:not(.pill) { display: none; } }
 
   /* HERO */
   .hero {
-    min-height: 88vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+    position: relative;
+    overflow: hidden;
     text-align: center;
-    padding: 48px 20px;
+    padding: 56px 20px 0;
     background:
-      radial-gradient(ellipse at 50% 100%, rgba(255,77,28,.35), transparent 60%),
-      radial-gradient(ellipse at 50% 0%, rgba(255,182,39,.12), transparent 55%),
+      radial-gradient(ellipse 80% 55% at 50% 105%, rgba(255,77,28,.45), transparent 70%),
+      radial-gradient(ellipse 60% 40% at 50% 0%, rgba(255,182,39,.10), transparent 70%),
       var(--bg);
   }
-  .flame { font-size: 3rem; filter: drop-shadow(0 0 18px rgba(255,77,28,.8)); }
+  .badge {
+    display: inline-block;
+    font-size: .75rem; font-weight: 700; letter-spacing: .22em; text-transform: uppercase;
+    color: var(--gold); border: 1px solid rgba(255,182,39,.45);
+    padding: 6px 14px; border-radius: 999px;
+  }
   .hero h1 {
-    font-size: clamp(3rem, 14vw, 6.5rem);
-    font-weight: 900;
-    letter-spacing: .06em;
-    text-transform: uppercase;
-    background: linear-gradient(180deg, var(--gold), var(--fire));
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    line-height: 1.05;
+    font-family: var(--display);
+    font-weight: 400;
+    font-size: clamp(3.6rem, 16vw, 10rem);
+    line-height: .9;
+    letter-spacing: .04em;
+    margin-top: 18px;
+    background: linear-gradient(180deg, #ffd36b 0%, var(--ember) 55%, var(--fire) 100%);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    filter: drop-shadow(0 6px 30px rgba(255,77,28,.35));
   }
-  .tagline {
-    margin-top: 14px;
-    font-size: clamp(1.1rem, 4.5vw, 1.6rem);
-    font-weight: 600;
+  .tagline { font-size: clamp(1.1rem, 4.4vw, 1.5rem); font-weight: 500; margin-top: 12px; }
+  .tagline b { color: var(--gold); }
+  .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin-top: 26px; }
+
+  .burger { width: min(300px, 70vw); margin: 34px auto 0; display: block; position: relative; z-index: 1; filter: drop-shadow(0 18px 30px rgba(0,0,0,.6)); animation: float 5s ease-in-out infinite; }
+  @keyframes float { 50% { transform: translateY(-8px); } }
+
+  /* brasas */
+  .embers { position: absolute; inset: 0; pointer-events: none; }
+  .embers i {
+    position: absolute; bottom: -10px; width: 6px; height: 6px; border-radius: 50%;
+    background: var(--ember); box-shadow: 0 0 10px 2px var(--fire);
+    opacity: 0; animation: rise linear infinite;
   }
-  .place {
-    margin-top: 6px;
-    color: var(--muted);
-    letter-spacing: .15em;
-    text-transform: uppercase;
-    font-size: .85rem;
+  @keyframes rise {
+    0% { transform: translate(0,0) scale(1); opacity: 0; }
+    15% { opacity: .9; }
+    100% { transform: translate(var(--dx), -480px) scale(.2); opacity: 0; }
   }
 
   /* BOTONES */
   .btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    margin-top: 28px;
-    padding: 16px 28px;
-    border-radius: 999px;
-    background: var(--wa);
-    color: #05260f;
-    font-weight: 800;
-    font-size: 1.05rem;
-    text-decoration: none;
-    box-shadow: 0 8px 28px rgba(37,211,102,.35);
+    display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+    padding: 15px 26px; border-radius: 999px;
+    font-weight: 700; font-size: 1rem; text-decoration: none;
     transition: transform .15s ease, box-shadow .15s ease;
   }
-  .btn:hover, .btn:focus-visible { transform: translateY(-2px); box-shadow: 0 12px 34px rgba(37,211,102,.5); }
-  .btn svg { width: 24px; height: 24px; fill: currentColor; }
+  .btn svg { width: 22px; height: 22px; fill: currentColor; }
+  .btn-wa { background: var(--wa); color: #04210d; box-shadow: 0 8px 26px rgba(37,211,102,.35); }
+  .btn-wa:hover { transform: translateY(-2px); box-shadow: 0 12px 34px rgba(37,211,102,.5); }
+  .btn-ghost { border: 1.5px solid var(--line); color: var(--text); background: rgba(255,255,255,.03); }
+  .btn-ghost:hover { border-color: var(--gold); color: var(--gold); }
+
+  /* CINTA */
+  .strip {
+    background: linear-gradient(90deg, var(--fire), var(--ember), var(--gold));
+    color: #1a0903; font-family: var(--display); letter-spacing: .12em; font-size: 1.25rem;
+    padding: 10px 0; overflow: hidden; white-space: nowrap;
+  }
+  .strip div { display: inline-block; padding-left: 100%; animation: marquee 22s linear infinite; }
+  @keyframes marquee { to { transform: translateX(-100%); } }
+
+  /* SECCIONES */
+  section { padding: 72px 0; }
+  .eyebrow { color: var(--fire); font-weight: 700; letter-spacing: .22em; font-size: .75rem; text-transform: uppercase; text-align: center; }
+  h2 { font-family: var(--display); font-weight: 400; text-align: center; font-size: clamp(2.6rem, 10vw, 4rem); letter-spacing: .05em; line-height: 1; margin-top: 6px; }
+  .sub { text-align: center; color: var(--muted); max-width: 520px; margin: 12px auto 40px; }
 
   /* MENÚ */
-  section { max-width: 1000px; margin: 0 auto; padding: 64px 20px; }
-  h2 {
-    text-align: center;
-    font-size: clamp(1.8rem, 7vw, 2.6rem);
-    text-transform: uppercase;
-    letter-spacing: .08em;
-  }
-  h2 span { color: var(--fire); }
-  .sub { text-align: center; color: var(--muted); margin: 8px 0 36px; }
-
   .grid { display: grid; gap: 18px; grid-template-columns: 1fr; }
-  @media (min-width: 640px) { .grid { grid-template-columns: 1fr 1fr; } }
-
+  @media (min-width: 680px) { .grid { grid-template-columns: 1fr 1fr; } }
   .item {
-    background: var(--card);
-    border: 1px solid var(--line);
-    border-radius: 18px;
-    padding: 24px;
-    position: relative;
-    overflow: hidden;
-    transition: transform .2s ease, border-color .2s ease;
+    position: relative; display: flex; flex-direction: column;
+    background: linear-gradient(160deg, var(--card), var(--bg2));
+    border: 1px solid var(--line); border-radius: 20px; padding: 26px 24px 22px;
+    overflow: hidden; transition: transform .2s ease, border-color .2s ease;
   }
-  .item::before {
-    content: "";
-    position: absolute; left: 0; top: 0; bottom: 0; width: 5px;
-    background: linear-gradient(var(--gold), var(--fire));
+  .item:hover { transform: translateY(-4px); border-color: var(--ember); }
+  .item .num {
+    position: absolute; right: 14px; top: -6px;
+    font-family: var(--display); font-size: 6rem; line-height: 1; color: rgba(255,255,255,.04);
   }
-  .item:hover { transform: translateY(-4px); border-color: var(--fire); }
-  .item-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
-  .item h3 { font-size: 1.3rem; }
-  .price { font-size: 1.4rem; font-weight: 800; color: var(--gold); white-space: nowrap; }
-  .item p { margin-top: 10px; color: var(--muted); font-size: .98rem; }
+  .item h3 { font-family: var(--display); font-weight: 400; font-size: 1.9rem; letter-spacing: .05em; line-height: 1.1; }
+  .item p { color: var(--muted); font-size: .95rem; margin-top: 8px; flex: 1; }
+  .item-foot { display: flex; align-items: center; justify-content: space-between; margin-top: 18px; padding-top: 16px; border-top: 1px dashed var(--line); }
+  .price { font-family: var(--display); font-size: 2.2rem; color: var(--gold); letter-spacing: .03em; line-height: 1; }
+  .mini { font-size: .85rem; font-weight: 700; color: var(--wa); text-decoration: none; }
+  .mini:hover { text-decoration: underline; }
   .tag {
-    display: inline-block; margin-top: 12px;
-    font-size: .72rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
-    color: var(--fire); border: 1px solid var(--fire); border-radius: 999px; padding: 2px 10px;
+    position: absolute; top: 16px; left: 24px;
+    font-size: .68rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+    background: var(--fire); color: #fff; border-radius: 999px; padding: 3px 10px;
   }
+  .item.hot h3 { margin-top: 26px; }
+  .note { text-align: center; color: var(--muted); font-size: .85rem; margin-top: 22px; }
 
-  /* CTA FINAL */
+  /* POR QUÉ CARBÓN */
+  .why { background: var(--bg2); border-block: 1px solid var(--line); }
+  .features { display: grid; gap: 28px; grid-template-columns: 1fr; margin-top: 36px; text-align: center; }
+  @media (min-width: 680px) { .features { grid-template-columns: repeat(3, 1fr); } }
+  .features .ico { font-size: 2.4rem; }
+  .features h4 { font-family: var(--display); font-weight: 400; font-size: 1.5rem; letter-spacing: .06em; margin-top: 6px; }
+  .features p { color: var(--muted); font-size: .93rem; }
+
+  /* CÓMO PEDIR */
+  .steps { display: grid; gap: 16px; grid-template-columns: 1fr; margin-top: 8px; counter-reset: s; }
+  @media (min-width: 680px) { .steps { grid-template-columns: repeat(3, 1fr); } }
+  .step { background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 22px; counter-increment: s; }
+  .step::before { content: counter(s); font-family: var(--display); font-size: 2.6rem; color: var(--fire); line-height: 1; display: block; }
+  .step h4 { margin-top: 4px; }
+  .step p { color: var(--muted); font-size: .92rem; }
+
+  /* CTA + INFO */
   .cta {
-    text-align: center;
-    background: linear-gradient(135deg, #2a0f07, #150c08);
+    text-align: center; border-radius: 26px; padding: 48px 22px;
+    background: radial-gradient(ellipse at 50% 120%, rgba(255,77,28,.4), transparent 65%), #170d08;
     border: 1px solid var(--line);
-    border-radius: 24px;
-    padding: 44px 20px;
-    margin: 0 20px;
-    max-width: 960px;
-    margin-inline: auto;
   }
-  .cta h2 { font-size: clamp(1.5rem, 6vw, 2.2rem); }
-  .cta p { color: var(--muted); margin-top: 8px; }
+  .cta p { color: var(--muted); margin: 10px 0 22px; }
+  .info { display: grid; gap: 14px; grid-template-columns: 1fr; margin-top: 28px; }
+  @media (min-width: 680px) { .info { grid-template-columns: 1fr 1fr; } }
+  .info div { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 18px 20px; }
+  .info small { display: block; color: var(--fire); font-weight: 700; letter-spacing: .15em; text-transform: uppercase; font-size: .7rem; }
+  .info span { font-weight: 500; }
 
-  footer { text-align: center; color: var(--muted); font-size: .85rem; padding: 40px 20px 110px; }
+  footer { text-align: center; color: var(--muted); font-size: .82rem; padding: 36px 20px 110px; border-top: 1px solid var(--line); }
+  footer b { font-family: var(--display); font-weight: 400; letter-spacing: .1em; color: var(--gold); font-size: 1.2rem; }
 
-  /* BOTÓN FLOTANTE (móvil) */
+  /* FLOTANTE */
   .fab {
-    position: fixed; right: 16px; bottom: 16px; z-index: 10;
-    width: 60px; height: 60px; border-radius: 50%;
-    background: var(--wa); color: #05260f;
+    position: fixed; right: 16px; bottom: 16px; z-index: 30;
+    width: 62px; height: 62px; border-radius: 50%;
+    background: var(--wa); color: #04210d;
     display: flex; align-items: center; justify-content: center;
-    box-shadow: 0 6px 22px rgba(0,0,0,.5);
+    box-shadow: 0 8px 24px rgba(0,0,0,.55), 0 0 0 0 rgba(37,211,102,.6);
+    animation: pulse 2.4s infinite;
   }
-  .fab svg { width: 32px; height: 32px; fill: currentColor; }
+  .fab svg { width: 34px; height: 34px; fill: currentColor; }
+  @keyframes pulse { 70% { box-shadow: 0 8px 24px rgba(0,0,0,.55), 0 0 0 16px rgba(37,211,102,0); } 100% { box-shadow: 0 8px 24px rgba(0,0,0,.55), 0 0 0 0 rgba(37,211,102,0); } }
+
+  @media (prefers-reduced-motion: reduce) {
+    .burger, .embers i, .strip div, .fab { animation: none; }
+    .strip div { padding-left: 0; }
+  }
 </style>
 </head>
 <body>
 
-<header class="hero">
-  <div class="flame" aria-hidden="true">🔥</div>
+<!-- Icono WhatsApp reutilizable -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="wa" viewBox="0 0 24 24"><path d="M20.5 3.5A11.8 11.8 0 0 0 12 0C5.4 0 .1 5.3.1 11.9c0 2.1.6 4.1 1.6 5.9L0 24l6.4-1.7a11.9 11.9 0 0 0 5.6 1.4h.1c6.6 0 11.9-5.3 11.9-11.9 0-3.2-1.2-6.2-3.5-8.3zM12 21.7c-1.8 0-3.5-.5-5-1.4l-.4-.2-3.8 1 1-3.7-.2-.4a9.8 9.8 0 0 1-1.5-5.2C2.1 6.4 6.5 2 12 2c2.6 0 5.1 1 6.9 2.9a9.7 9.7 0 0 1 2.9 6.9c0 5.4-4.4 9.9-9.8 9.9zm5.4-7.4c-.3-.1-1.7-.8-2-.9-.3-.1-.5-.1-.7.1l-.9 1.1c-.2.2-.3.2-.6.1-1.6-.8-2.7-1.4-3.7-3.2-.3-.5.3-.5.8-1.5.1-.2 0-.4 0-.5l-.9-2.1c-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5s1.1 2.9 1.2 3.1c.1.2 2.1 3.2 5.1 4.5 1.9.8 2.6.9 3.6.7.6-.1 1.7-.7 2-1.4.2-.7.2-1.3.2-1.4-.1-.2-.3-.3-.6-.4z"/></symbol>
+</svg>
+
+<nav>
+  <div class="wrap">
+    <a class="logo" href="#inicio">YAKINIKU</a>
+    <div class="links">
+      <a href="#menu">Menú</a>
+      <a href="#pedir">Cómo pedir</a>
+      <a class="pill" href="#" data-wa="¡Hola Yakiniku! Quiero hacer un pedido 🍔">Pedir</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero" id="inicio">
+  <div class="embers" id="embers" aria-hidden="true"></div>
+  <span class="badge">Lago Agrio · Ecuador</span>
   <h1>Yakiniku</h1>
-  <p class="tagline">Brasa de verdad. Sabor sin vuelta atrás.</p>
-  <p class="place">Hamburguesas al carbón · Lago Agrio</p>
-  <a class="btn" href="#" data-wa="¡Hola Yakiniku! Quiero hacer un pedido 🍔">
-    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 3.5A11.8 11.8 0 0 0 12 0C5.4 0 .1 5.3.1 11.9c0 2.1.6 4.1 1.6 5.9L0 24l6.4-1.7a11.9 11.9 0 0 0 5.6 1.4h.1c6.6 0 11.9-5.3 11.9-11.9 0-3.2-1.2-6.2-3.5-8.3zM12 21.7c-1.8 0-3.5-.5-5-1.4l-.4-.2-3.8 1 1-3.7-.2-.4a9.8 9.8 0 0 1-1.5-5.2C2.1 6.4 6.5 2 12 2c2.6 0 5.1 1 6.9 2.9a9.7 9.7 0 0 1 2.9 6.9c0 5.4-4.4 9.9-9.8 9.9zm5.4-7.4c-.3-.1-1.7-.8-2-.9-.3-.1-.5-.1-.7.1l-.9 1.1c-.2.2-.3.2-.6.1-1.6-.8-2.7-1.4-3.7-3.2-.3-.5.3-.5.8-1.5.1-.2 0-.4 0-.5l-.9-2.1c-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5s1.1 2.9 1.2 3.1c.1.2 2.1 3.2 5.1 4.5 1.9.8 2.6.9 3.6.7.6-.1 1.7-.7 2-1.4.2-.7.2-1.3.2-1.4-.1-.2-.3-.3-.6-.4z"/></svg>
-    Pedir por WhatsApp
-  </a>
+  <p class="tagline">Hamburguesas al carbón. <b>Brasa de verdad.</b></p>
+  <div class="hero-actions">
+    <a class="btn btn-wa" href="#" data-wa="¡Hola Yakiniku! Quiero hacer un pedido 🍔"><svg><use href="#wa"/></svg>Pedir por WhatsApp</a>
+    <a class="btn btn-ghost" href="#menu">Ver el menú</a>
+  </div>
+
+  <!-- Hamburguesa dibujada en SVG -->
+  <svg class="burger" viewBox="0 0 300 250" role="img" aria-label="Hamburguesa al carbón">
+    <defs>
+      <linearGradient id="bun" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffb347"/><stop offset="1" stop-color="#d9731a"/></linearGradient>
+      <linearGradient id="meat" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4a2a1c"/><stop offset="1" stop-color="#26130c"/></linearGradient>
+    </defs>
+    <path d="M30 120C30 50 90 14 150 14s120 36 120 106z" fill="url(#bun)"/>
+    <g fill="#fff3d6" opacity=".9"><ellipse cx="100" cy="58" rx="7" ry="3.5" transform="rotate(-20 100 58)"/><ellipse cx="150" cy="42" rx="7" ry="3.5"/><ellipse cx="200" cy="58" rx="7" ry="3.5" transform="rotate(20 200 58)"/><ellipse cx="125" cy="80" rx="7" ry="3.5" transform="rotate(-10 125 80)"/><ellipse cx="178" cy="82" rx="7" ry="3.5" transform="rotate(12 178 82)"/></g>
+    <path d="M22 124c20 14 38-10 58 4s38-10 58 4 38-10 58 4 38-10 58 4 20-6 26-6v12H22z" fill="#5fbf3a"/>
+    <path d="M30 140h240l-10 26-30-14-30 26-30-26-30 26-30-26-30 26-30-26z" fill="#ffc933"/>
+    <rect x="22" y="146" width="256" height="34" rx="17" fill="url(#meat)"/>
+    <g stroke="#ff7a1a" stroke-width="3" stroke-linecap="round" opacity=".55"><path d="M60 156l14 14M110 156l14 14M160 156l14 14M210 156l14 14"/></g>
+    <path d="M40 188h220c0 28-26 44-110 44S40 216 40 188z" fill="url(#bun)"/>
+  </svg>
+
+  <div class="strip" aria-hidden="true" style="margin: -22px -20px 0; position: relative; z-index: 2;">
+    <div>🔥 AL CARBÓN &nbsp;·&nbsp; 🍔 PAN FRESCO &nbsp;·&nbsp; 🥩 CARNE JUGOSA &nbsp;·&nbsp; 📍 LAGO AGRIO &nbsp;·&nbsp; 🔥 AL CARBÓN &nbsp;·&nbsp; 🍔 PAN FRESCO &nbsp;·&nbsp; 🥩 CARNE JUGOSA &nbsp;·&nbsp; 📍 LAGO AGRIO &nbsp;</div>
+  </div>
 </header>
 
 <main>
   <section id="menu">
-    <h2>Nuestro <span>Menú</span></h2>
-    <p class="sub">Carne a la parrilla de carbón, pan fresco y mucho sabor.</p>
+    <div class="wrap">
+      <p class="eyebrow">Nuestra carta</p>
+      <h2>El Menú</h2>
+      <p class="sub">Cuatro hamburguesas, todas a la parrilla de carbón. Toca “Pedir” y te abre el WhatsApp con tu pedido listo.</p>
 
-    <div class="grid">
-      <article class="item">
-        <div class="item-head"><h3>Yakiniku Clásica</h3><span class="price">$4.50</span></div>
-        <p>Carne de res al carbón, lechuga, tomate, cebolla y nuestra salsa de la casa en pan artesanal.</p>
-      </article>
+      <div class="grid">
+        <article class="item">
+          <span class="num">01</span>
+          <h3>Yakiniku Clásica</h3>
+          <p>Carne de res al carbón, lechuga, tomate, cebolla y nuestra salsa de la casa en pan artesanal.</p>
+          <div class="item-foot"><span class="price">$4.50</span><a class="mini" href="#" data-wa="¡Hola Yakiniku! Quiero una Yakiniku Clásica 🍔">Pedir →</a></div>
+        </article>
 
-      <article class="item">
-        <div class="item-head"><h3>Doble Brasa</h3><span class="price">$6.50</span></div>
-        <p>Dos carnes jugosas al carbón, doble queso derretido, tocino crocante y pepinillos.</p>
-        <span class="tag">La más pedida</span>
-      </article>
+        <article class="item hot">
+          <span class="num">02</span>
+          <span class="tag">La más pedida</span>
+          <h3>Doble Brasa</h3>
+          <p>Dos carnes jugosas al carbón, doble queso derretido, tocino crocante y pepinillos.</p>
+          <div class="item-foot"><span class="price">$6.50</span><a class="mini" href="#" data-wa="¡Hola Yakiniku! Quiero una Doble Brasa 🍔">Pedir →</a></div>
+        </article>
 
-      <article class="item">
-        <div class="item-head"><h3>Fuego Picante</h3><span class="price">$5.50</span></div>
-        <p>Carne al carbón con ají, jalapeños, queso pepper jack y mayonesa picante ahumada.</p>
-      </article>
+        <article class="item">
+          <span class="num">03</span>
+          <h3>Fuego Picante</h3>
+          <p>Carne al carbón con ají, jalapeños, queso pepper jack y mayonesa picante ahumada.</p>
+          <div class="item-foot"><span class="price">$5.50</span><a class="mini" href="#" data-wa="¡Hola Yakiniku! Quiero una Fuego Picante 🔥">Pedir →</a></div>
+        </article>
 
-      <article class="item">
-        <div class="item-head"><h3>Amazónica BBQ</h3><span class="price">$5.99</span></div>
-        <p>Carne al carbón, salsa BBQ ahumada, aros de cebolla, queso cheddar y plátano maduro frito.</p>
-      </article>
+        <article class="item">
+          <span class="num">04</span>
+          <h3>Amazónica BBQ</h3>
+          <p>Carne al carbón, salsa BBQ ahumada, aros de cebolla, queso cheddar y plátano maduro frito.</p>
+          <div class="item-foot"><span class="price">$5.99</span><a class="mini" href="#" data-wa="¡Hola Yakiniku! Quiero una Amazónica BBQ 🍔">Pedir →</a></div>
+        </article>
+      </div>
+      <p class="note">Precios en dólares. Consulta por combos con papas y bebida.</p>
     </div>
   </section>
 
-  <div class="cta">
-    <h2>¿Antojo de <span style="color:var(--fire)">brasa</span>?</h2>
-    <p>Escríbenos y te tomamos el pedido al instante.</p>
-    <a class="btn" href="#" data-wa="¡Hola Yakiniku! Quiero hacer un pedido 🍔">
-      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 3.5A11.8 11.8 0 0 0 12 0C5.4 0 .1 5.3.1 11.9c0 2.1.6 4.1 1.6 5.9L0 24l6.4-1.7a11.9 11.9 0 0 0 5.6 1.4h.1c6.6 0 11.9-5.3 11.9-11.9 0-3.2-1.2-6.2-3.5-8.3zM12 21.7c-1.8 0-3.5-.5-5-1.4l-.4-.2-3.8 1 1-3.7-.2-.4a9.8 9.8 0 0 1-1.5-5.2C2.1 6.4 6.5 2 12 2c2.6 0 5.1 1 6.9 2.9a9.7 9.7 0 0 1 2.9 6.9c0 5.4-4.4 9.9-9.8 9.9zm5.4-7.4c-.3-.1-1.7-.8-2-.9-.3-.1-.5-.1-.7.1l-.9 1.1c-.2.2-.3.2-.6.1-1.6-.8-2.7-1.4-3.7-3.2-.3-.5.3-.5.8-1.5.1-.2 0-.4 0-.5l-.9-2.1c-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5s1.1 2.9 1.2 3.1c.1.2 2.1 3.2 5.1 4.5 1.9.8 2.6.9 3.6.7.6-.1 1.7-.7 2-1.4.2-.7.2-1.3.2-1.4-.1-.2-.3-.3-.6-.4z"/></svg>
-      Pedir por WhatsApp
-    </a>
-  </div>
+  <section class="why">
+    <div class="wrap">
+      <p class="eyebrow">La diferencia</p>
+      <h2>¿Por qué al carbón?</h2>
+      <div class="features">
+        <div><div class="ico">🔥</div><h4>Sabor ahumado</h4><p>La brasa sella la carne y le da ese aroma que no consigues en plancha.</p></div>
+        <div><div class="ico">🥩</div><h4>Jugosa por dentro</h4><p>Cocción lenta sobre carbón: crocante afuera, tierna adentro.</p></div>
+        <div><div class="ico">🍞</div><h4>Todo fresco</h4><p>Pan, vegetales y salsas preparados el mismo día.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="pedir">
+    <div class="wrap">
+      <p class="eyebrow">Fácil y rápido</p>
+      <h2>Cómo pedir</h2>
+      <div class="steps" style="margin-top:36px">
+        <div class="step"><h4>Elige tu hamburguesa</h4><p>Mira el menú y decide cuál se te antoja.</p></div>
+        <div class="step"><h4>Escríbenos por WhatsApp</h4><p>Un toque en cualquier botón verde y listo.</p></div>
+        <div class="step"><h4>Recibe o retira</h4><p>Te confirmamos el tiempo y la entrega.</p></div>
+      </div>
+
+      <div class="cta" style="margin-top:44px">
+        <h2>¿Antojo de brasa?</h2>
+        <p>Escríbenos y te tomamos el pedido al instante.</p>
+        <a class="btn btn-wa" href="#" data-wa="¡Hola Yakiniku! Quiero hacer un pedido 🍔"><svg><use href="#wa"/></svg>Pedir por WhatsApp</a>
+      </div>
+
+      <div class="info">
+        <div><small>Ubicación</small><span>Lago Agrio, Sucumbíos</span></div>
+        <div><small>Horario</small><span>Todos los días · 17:00 a 23:00</span></div>
+      </div>
+    </div>
+  </section>
 </main>
 
 <footer>
-  <p>© Yakiniku · Hamburguesas al carbón · Lago Agrio, Sucumbíos, Ecuador</p>
+  <b>YAKINIKU</b>
+  <p style="margin-top:6px">Hamburguesas al carbón · Lago Agrio, Ecuador</p>
 </footer>
 
-<a class="fab" href="#" data-wa="¡Hola Yakiniku! Quiero hacer un pedido 🍔" aria-label="Pedir por WhatsApp">
-  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 3.5A11.8 11.8 0 0 0 12 0C5.4 0 .1 5.3.1 11.9c0 2.1.6 4.1 1.6 5.9L0 24l6.4-1.7a11.9 11.9 0 0 0 5.6 1.4h.1c6.6 0 11.9-5.3 11.9-11.9 0-3.2-1.2-6.2-3.5-8.3zM12 21.7c-1.8 0-3.5-.5-5-1.4l-.4-.2-3.8 1 1-3.7-.2-.4a9.8 9.8 0 0 1-1.5-5.2C2.1 6.4 6.5 2 12 2c2.6 0 5.1 1 6.9 2.9a9.7 9.7 0 0 1 2.9 6.9c0 5.4-4.4 9.9-9.8 9.9zm5.4-7.4c-.3-.1-1.7-.8-2-.9-.3-.1-.5-.1-.7.1l-.9 1.1c-.2.2-.3.2-.6.1-1.6-.8-2.7-1.4-3.7-3.2-.3-.5.3-.5.8-1.5.1-.2 0-.4 0-.5l-.9-2.1c-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5s1.1 2.9 1.2 3.1c.1.2 2.1 3.2 5.1 4.5 1.9.8 2.6.9 3.6.7.6-.1 1.7-.7 2-1.4.2-.7.2-1.3.2-1.4-.1-.2-.3-.3-.6-.4z"/></svg>
-</a>
+<a class="fab" href="#" data-wa="¡Hola Yakiniku! Quiero hacer un pedido 🍔" aria-label="Pedir por WhatsApp"><svg><use href="#wa"/></svg></a>
 
 <script>
   // Cambia aquí el número de WhatsApp: código de país + número, sin "+" ni espacios.
@@ -221,6 +349,18 @@
     a.target = "_blank";
     a.rel = "noopener";
   });
+
+  // Brasas flotando en el hero
+  const box = document.getElementById("embers");
+  for (let i = 0; i < 22; i++) {
+    const e = document.createElement("i");
+    e.style.left = Math.random() * 100 + "%";
+    e.style.setProperty("--dx", (Math.random() * 80 - 40) + "px");
+    e.style.animationDuration = (4 + Math.random() * 5) + "s";
+    e.style.animationDelay = (-Math.random() * 8) + "s";
+    e.style.width = e.style.height = (3 + Math.random() * 5) + "px";
+    box.appendChild(e);
+  }
 </script>
 </body>
 </html>
