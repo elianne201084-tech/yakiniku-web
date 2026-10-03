@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Yakiniku | Hamburguesas al carbón en Lago Agrio</title>
+<meta name="description" content="Yakiniku: hamburguesas al carbón en Lago Agrio. Pide por WhatsApp.">
+<meta name="theme-color" content="#0d0b0a">
+<style>
+  :root {
+    --bg: #0d0b0a;
+    --card: #1a1512;
+    --line: #2e2520;
+    --text: #f5ede6;
+    --muted: #b3a498;
+    --fire: #ff4d1c;
+    --gold: #ffb627;
+    --wa: #25d366;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: "Segoe UI", system-ui, -apple-system, Roboto, sans-serif;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* HERO */
+  .hero {
+    min-height: 88vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 48px 20px;
+    background:
+      radial-gradient(ellipse at 50% 100%, rgba(255,77,28,.35), transparent 60%),
+      radial-gradient(ellipse at 50% 0%, rgba(255,182,39,.12), transparent 55%),
+      var(--bg);
+  }
+  .flame { font-size: 3rem; filter: drop-shadow(0 0 18px rgba(255,77,28,.8)); }
+  .hero h1 {
+    font-size: clamp(3rem, 14vw, 6.5rem);
+    font-weight: 900;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    background: linear-gradient(180deg, var(--gold), var(--fire));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    line-height: 1.05;
+  }
+  .tagline {
+    margin-top: 14px;
+    font-size: clamp(1.1rem, 4.5vw, 1.6rem);
+    font-weight: 600;
+  }
+  .place {
+    margin-top: 6px;
+    color: var(--muted);
+    letter-spacing: .15em;
+    text-transform: uppercase;
+    font-size: .85rem;
+  }
+
+  /* BOTONES */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 28px;
+    padding: 16px 28px;
+    border-radius: 999px;
+    background: var(--wa);
+    color: #05260f;
+    font-weight: 800;
+    font-size: 1.05rem;
+    text-decoration: none;
+    box-shadow: 0 8px 28px rgba(37,211,102,.35);
+    transition: transform .15s ease, box-shadow .15s ease;
+  }
+  .btn:hover, .btn:focus-visible { transform: translateY(-2px); box-shadow: 0 12px 34px rgba(37,211,102,.5); }
+  .btn svg { width: 24px; height: 24px; fill: currentColor; }
+
+  /* MENÚ */
+  section { max-width: 1000px; margin: 0 auto; padding: 64px 20px; }
+  h2 {
+    text-align: center;
+    font-size: clamp(1.8rem, 7vw, 2.6rem);
+    text-transform: uppercase;
+    letter-spacing: .08em;
+  }
+  h2 span { color: var(--fire); }
+  .sub { text-align: center; color: var(--muted); margin: 8px 0 36px; }
+
+  .grid { display: grid; gap: 18px; grid-template-columns: 1fr; }
+  @media (min-width: 640px) { .grid { grid-template-columns: 1fr 1fr; } }
+
+  .item {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 24px;
+    position: relative;
+    overflow: hidden;
+    transition: transform .2s ease, border-color .2s ease;
+  }
+  .item::before {
+    content: "";
+    position: absolute; left: 0; top: 0; bottom: 0; width: 5px;
+    background: linear-gradient(var(--gold), var(--fire));
+  }
+  .item:hover { transform: translateY(-4px); border-color: var(--fire); }
+  .item-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+  .item h3 { font-size: 1.3rem; }
+  .price { font-size: 1.4rem; font-weight: 800; color: var(--gold); white-space: nowrap; }
+  .item p { margin-top: 10px; color: var(--muted); font-size: .98rem; }
+  .tag {
+    display: inline-block; margin-top: 12px;
+    font-size: .72rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+    color: var(--fire); border: 1px solid var(--fire); border-radius: 999px; padding: 2px 10px;
+  }
+
+  /* CTA FINAL */
+  .cta {
+    text-align: center;
+    background: linear-gradient(135deg, #2a0f07, #150c08);
+    border: 1px solid var(--line);
+    border-radius: 24px;
+    padding: 44px 20px;
+    margin: 0 20px;
+    max-width: 960px;
+    margin-inline: auto;
+  }
+  .cta h2 { font-size: clamp(1.5rem, 6vw, 2.2rem); }
+  .cta p { color: var(--muted); margin-top: 8px; }
+
+  footer { text-align: center; color: var(--muted); font-size: .85rem; padding: 40px 20px 110px; }
+
+  /* BOTÓN FLOTANTE (móvil) */
+  .fab {
+    position: fixed; right: 16px; bottom: 16px; z-index: 10;
+    width: 60px; height: 60px; border-radius: 50%;
+    background: var(--wa); color: #05260f;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 6px 22px rgba(0,0,0,.5);
+  }
+  .fab svg { width: 32px; height: 32px; fill: currentColor; }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="flame" aria-hidden="true">🔥</div>
+  <h1>Yakiniku</h1>
+  <p class="tagline">Brasa de verdad. Sabor sin vuelta atrás.</p>
+  <p class="place">Hamburguesas al carbón · Lago Agrio</p>
+  <a class="btn" href="#" data-wa="¡Hola Yakiniku! Quiero hacer un pedido 🍔">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 3.5A11.8 11.8 0 0 0 12 0C5.4 0 .1 5.3.1 11.9c0 2.1.6 4.1 1.6 5.9L0 24l6.4-1.7a11.9 11.9 0 0 0 5.6 1.4h.1c6.6 0 11.9-5.3 11.9-11.9 0-3.2-1.2-6.2-3.5-8.3zM12 21.7c-1.8 0-3.5-.5-5-1.4l-.4-.2-3.8 1 1-3.7-.2-.4a9.8 9.8 0 0 1-1.5-5.2C2.1 6.4 6.5 2 12 2c2.6 0 5.1 1 6.9 2.9a9.7 9.7 0 0 1 2.9 6.9c0 5.4-4.4 9.9-9.8 9.9zm5.4-7.4c-.3-.1-1.7-.8-2-.9-.3-.1-.5-.1-.7.1l-.9 1.1c-.2.2-.3.2-.6.1-1.6-.8-2.7-1.4-3.7-3.2-.3-.5.3-.5.8-1.5.1-.2 0-.4 0-.5l-.9-2.1c-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5s1.1 2.9 1.2 3.1c.1.2 2.1 3.2 5.1 4.5 1.9.8 2.6.9 3.6.7.6-.1 1.7-.7 2-1.4.2-.7.2-1.3.2-1.4-.1-.2-.3-.3-.6-.4z"/></svg>
+    Pedir por WhatsApp
+  </a>
+</header>
+
+<main>
+  <section id="menu">
+    <h2>Nuestro <span>Menú</span></h2>
+    <p class="sub">Carne a la parrilla de carbón, pan fresco y mucho sabor.</p>
+
+    <div class="grid">
+      <article class="item">
+        <div class="item-head"><h3>Yakiniku Clásica</h3><span class="price">$4.50</span></div>
+        <p>Carne de res al carbón, lechuga, tomate, cebolla y nuestra salsa de la casa en pan artesanal.</p>
+      </article>
+
+      <article class="item">
+        <div class="item-head"><h3>Doble Brasa</h3><span class="price">$6.50</span></div>
+        <p>Dos carnes jugosas al carbón, doble queso derretido, tocino crocante y pepinillos.</p>
+        <span class="tag">La más pedida</span>
+      </article>
+
+      <article class="item">
+        <div class="item-head"><h3>Fuego Picante</h3><span class="price">$5.50</span></div>
+        <p>Carne al carbón con ají, jalapeños, queso pepper jack y mayonesa picante ahumada.</p>
+      </article>
+
+      <article class="item">
+        <div class="item-head"><h3>Amazónica BBQ</h3><span class="price">$5.99</span></div>
+        <p>Carne al carbón, salsa BBQ ahumada, aros de cebolla, queso cheddar y plátano maduro frito.</p>
+      </article>
+    </div>
+  </section>
+
+  <div class="cta">
+    <h2>¿Antojo de <span style="color:var(--fire)">brasa</span>?</h2>
+    <p>Escríbenos y te tomamos el pedido al instante.</p>
+    <a class="btn" href="#" data-wa="¡Hola Yakiniku! Quiero hacer un pedido 🍔">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 3.5A11.8 11.8 0 0 0 12 0C5.4 0 .1 5.3.1 11.9c0 2.1.6 4.1 1.6 5.9L0 24l6.4-1.7a11.9 11.9 0 0 0 5.6 1.4h.1c6.6 0 11.9-5.3 11.9-11.9 0-3.2-1.2-6.2-3.5-8.3zM12 21.7c-1.8 0-3.5-.5-5-1.4l-.4-.2-3.8 1 1-3.7-.2-.4a9.8 9.8 0 0 1-1.5-5.2C2.1 6.4 6.5 2 12 2c2.6 0 5.1 1 6.9 2.9a9.7 9.7 0 0 1 2.9 6.9c0 5.4-4.4 9.9-9.8 9.9zm5.4-7.4c-.3-.1-1.7-.8-2-.9-.3-.1-.5-.1-.7.1l-.9 1.1c-.2.2-.3.2-.6.1-1.6-.8-2.7-1.4-3.7-3.2-.3-.5.3-.5.8-1.5.1-.2 0-.4 0-.5l-.9-2.1c-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5s1.1 2.9 1.2 3.1c.1.2 2.1 3.2 5.1 4.5 1.9.8 2.6.9 3.6.7.6-.1 1.7-.7 2-1.4.2-.7.2-1.3.2-1.4-.1-.2-.3-.3-.6-.4z"/></svg>
+      Pedir por WhatsApp
+    </a>
+  </div>
+</main>
+
+<footer>
+  <p>© Yakiniku · Hamburguesas al carbón · Lago Agrio, Sucumbíos, Ecuador</p>
+</footer>
+
+<a class="fab" href="#" data-wa="¡Hola Yakiniku! Quiero hacer un pedido 🍔" aria-label="Pedir por WhatsApp">
+  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 3.5A11.8 11.8 0 0 0 12 0C5.4 0 .1 5.3.1 11.9c0 2.1.6 4.1 1.6 5.9L0 24l6.4-1.7a11.9 11.9 0 0 0 5.6 1.4h.1c6.6 0 11.9-5.3 11.9-11.9 0-3.2-1.2-6.2-3.5-8.3zM12 21.7c-1.8 0-3.5-.5-5-1.4l-.4-.2-3.8 1 1-3.7-.2-.4a9.8 9.8 0 0 1-1.5-5.2C2.1 6.4 6.5 2 12 2c2.6 0 5.1 1 6.9 2.9a9.7 9.7 0 0 1 2.9 6.9c0 5.4-4.4 9.9-9.8 9.9zm5.4-7.4c-.3-.1-1.7-.8-2-.9-.3-.1-.5-.1-.7.1l-.9 1.1c-.2.2-.3.2-.6.1-1.6-.8-2.7-1.4-3.7-3.2-.3-.5.3-.5.8-1.5.1-.2 0-.4 0-.5l-.9-2.1c-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5s1.1 2.9 1.2 3.1c.1.2 2.1 3.2 5.1 4.5 1.9.8 2.6.9 3.6.7.6-.1 1.7-.7 2-1.4.2-.7.2-1.3.2-1.4-.1-.2-.3-.3-.6-.4z"/></svg>
+</a>
+
+<script>
+  // Cambia aquí el número de WhatsApp: código de país + número, sin "+" ni espacios.
+  // Ecuador = 593, y se quita el 0 inicial. Ej: 0991234567 -> 593991234567
+  const WHATSAPP = "593999999999";
+
+  document.querySelectorAll("[data-wa]").forEach(a => {
+    a.href = "https://wa.me/" + WHATSAPP + "?text=" + encodeURIComponent(a.dataset.wa);
+    a.target = "_blank";
+    a.rel = "noopener";
+  });
+</script>
+</body>
+</html>
