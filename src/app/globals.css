@@ -1,0 +1,35 @@
+@import "tailwindcss";
+
+@theme {
+  --color-brand-50: #fdf1ee;
+  --color-brand-100: #fbdcd5;
+  --color-brand-500: #d9472b;
+  --color-brand-600: #c8341e;
+  --color-brand-700: #9e2614;
+  --color-sun-400: #f7c331;
+  --color-sun-500: #f5b700;
+  --color-ink: #1b1b2f;
+  --color-ink-soft: #55556b;
+  --color-paper: #faf7f2;
+  --color-line: #e6e0d6;
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+html { -webkit-text-size-adjust: 100%; }
+body { background: var(--color-paper); color: var(--color-ink); font-family: var(--font-sans); }
+:focus-visible { outline: 3px solid var(--color-sun-500); outline-offset: 2px; }
+
+/* Botones y campos: objetivos táctiles de al menos 44 px */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: .5rem; min-height: 44px; padding: 0 1.1rem;
+  border-radius: .75rem; font-weight: 700; transition: background .15s; cursor: pointer; text-align: center; }
+.btn-primary { background: var(--color-brand-600); color: #fff; }
+.btn-primary:hover { background: var(--color-brand-700); }
+.btn-dark { background: var(--color-ink); color: #fff; }
+.btn-ghost { background: #fff; color: var(--color-ink); border: 1px solid var(--color-line); }
+.btn-wa { background: #128c4a; color: #fff; }
+.btn[disabled], .btn:disabled { opacity: .5; cursor: not-allowed; }
+.field { width: 100%; min-height: 44px; border: 1px solid #cfc7b9; border-radius: .6rem; padding: .55rem .8rem; background: #fff; font-size: 16px; }
+.card { background: #fff; border: 1px solid var(--color-line); border-radius: 1rem; }
+.field { color: var(--color-ink); }
+.field::placeholder { color: #7a7468; opacity: 1; }
+.label { display: block; font-size: .85rem; font-weight: 600; margin-bottom: .25rem; }
