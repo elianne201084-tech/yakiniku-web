@@ -5,6 +5,19 @@ Convención: ✅ = verificado en fuente pública (enlaces al final) · ⚠️ = 
 
 ---
 
+## Decisiones confirmadas por el cliente
+
+1. **Garantía:** la empresa responde por ella, apoyándose en la garantía del sitio de origen del producto. (Ojo legal: ante el consumidor ecuatoriano responde igualmente el vendedor local; la garantía del origen no lo reemplaza. Redactar la política con un abogado.)
+2. **Proveedores:** nacionales e internacionales (el modelo ya distingue origen, país y plazos de importación).
+3. **Facturación electrónica del SRI:** etapa 6.
+4. **WhatsApp:** confirmación automática y seguimiento continuo (implementado en la etapa 1; requiere cuenta de WhatsApp Business verificada).
+5. **Cobro:** contra entrega con empresas de courier; además transferencia, depósito y tarjeta de crédito (etapa 5).
+6. **Panel mínimo en la etapa 1** y marca «regulado» configurable por categoría: aceptado.
+7. **Infraestructura:** se crea desde cero (Neon/Supabase, Vercel y dominio): ver README.
+8. **Nombre:** Chasqui Market (provisional; verificar marca y dominio).
+
+---
+
 ## 1. Resumen de decisiones técnicas
 
 | Tema | Decisión | Por qué |

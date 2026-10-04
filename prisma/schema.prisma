@@ -1,0 +1,427 @@
+// Modelo de datos de Chasqui Market. Dinero siempre en centavos de USD (Int).
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  ADMIN
+  OPERATOR
+  SUPPLIER
+  CUSTOMER
+}
+
+enum SupplierOrigin {
+  NACIONAL
+  INTERNACIONAL
+}
+
+enum ProductStatus {
+  DRAFT
+  PENDING_REVIEW
+  PUBLISHED
+  SUSPENDED
+}
+
+enum BrandDeclaration {
+  ORIGINAL_AUTORIZADO // original, el proveedor está autorizado a venderlo
+  GENERICO_SIN_MARCA // genérico, sin marca registrada
+}
+
+enum DocType {
+  REGISTRO_SANITARIO
+  NOTIFICACION_SANITARIA
+  CERTIFICADO_INEN
+  HOMOLOGACION_ARCOTEL
+  OTRO
+}
+
+enum DocReview {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum OrderChannel {
+  WEB
+  WHATSAPP
+  FACEBOOK
+  INSTAGRAM
+  TIKTOK
+}
+
+enum OrderStatus {
+  NEW
+  CONFIRMED
+  SENT_TO_SUPPLIER
+  DISPATCHED
+  DELIVERED
+  RETURNED
+  CANCELLED
+}
+
+enum PaymentMethod {
+  COD // contra entrega
+  TRANSFER
+  DEPOSIT
+  CARD
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+  REFUNDED
+}
+
+enum AttrType {
+  TEXT
+  NUMBER
+  LIST
+  COLOR
+}
+
+enum NotifChannel {
+  WHATSAPP
+  EMAIL
+}
+
+enum NotifStatus {
+  PENDING
+  SENT
+  FAILED
+}
+
+model User {
+  id             String    @id @default(cuid())
+  email          String    @unique
+  name           String
+  passwordHash   String
+  role           Role
+  supplierId     String?
+  supplier       Supplier? @relation(fields: [supplierId], references: [id])
+  active         Boolean   @default(true)
+  failedAttempts Int       @default(0)
+  lockedUntil    DateTime?
+  createdAt      DateTime  @default(now())
+}
+
+model Supplier {
+  id              String         @id @default(cuid())
+  legalName       String
+  tradeName       String
+  ruc             String?
+  origin          SupplierOrigin @default(NACIONAL)
+  country         String         @default("Ecuador")
+  email           String?
+  whatsapp        String?
+  province        String?
+  defaultLeadDays Int            @default(3)
+  notes           String?
+  active          Boolean        @default(true)
+  createdAt       DateTime       @default(now())
+  products        Product[]
+  users           User[]
+  subOrders       SubOrder[]
+}
+
+model Brand {
+  id       String    @id @default(cuid())
+  name     String    @unique
+  blocked  Boolean   @default(false) // marcas bloqueadas: no se permite publicar
+  products Product[]
+}
+
+model SizeGuide {
+  id         String     @id @default(cuid())
+  name       String
+  unit       String     @default("cm")
+  columns    String[]
+  rows       Json // [{ label: "M", values: ["88","70","94"] }]
+  categories Category[]
+}
+
+model Category {
+  id               String        @id @default(cuid())
+  parentId         String?
+  parent           Category?     @relation("tree", fields: [parentId], references: [id])
+  children         Category[]    @relation("tree")
+  level            Int // 1 = categoría, 2 = subcategoría, 3 = tipo
+  path             String        @unique // "moda-mujer/vestidos"
+  slug             String
+  name             String
+  position         Int           @default(0)
+  isVisible        Boolean       @default(true)
+  isRegulated      Boolean       @default(false)
+  acceptedDocTypes DocType[]
+  sizeGuideId      String?
+  sizeGuide        SizeGuide?    @relation(fields: [sizeGuideId], references: [id])
+  attributes       CategoryAttr[]
+  products         Product[]
+
+  @@unique([parentId, slug])
+  @@index([parentId, position])
+}
+
+model AttributeDef {
+  id           String         @id @default(cuid())
+  key          String         @unique
+  name         String
+  type         AttrType       @default(TEXT)
+  unit         String?
+  options      String[]
+  isVariant    Boolean        @default(false)
+  isFilterable Boolean        @default(false)
+  categories   CategoryAttr[]
+}
+
+model CategoryAttr {
+  categoryId  String
+  category    Category     @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  attributeId String
+  attribute   AttributeDef @relation(fields: [attributeId], references: [id], onDelete: Cascade)
+  required    Boolean      @default(false)
+  position    Int          @default(0)
+
+  @@id([categoryId, attributeId])
+}
+
+model Product {
+  id               String           @id @default(cuid())
+  supplierId       String
+  supplier         Supplier         @relation(fields: [supplierId], references: [id])
+  categoryId       String
+  category         Category         @relation(fields: [categoryId], references: [id])
+  brandId          String?
+  brand            Brand?           @relation(fields: [brandId], references: [id])
+  brandDeclaration BrandDeclaration @default(GENERICO_SIN_MARCA)
+  declaredAt       DateTime?
+  title            String
+  slug             String           @unique
+  description      String           @default("")
+  status           ProductStatus    @default(DRAFT)
+  leadDaysMin      Int              @default(2)
+  leadDaysMax      Int              @default(5)
+  attributes       Json             @default("{}")
+  weightGrams      Int              @default(500)
+  ivaRate          Int? // % que sustituye al general; null = usa el general
+  isRecommended    Boolean          @default(false)
+  ratingAvg        Float            @default(0)
+  ratingCount      Int              @default(0)
+  soldCount        Int              @default(0)
+  // Campos desnormalizados para listar rápido (los mantiene syncProductDenorm)
+  priceCents       Int              @default(0)
+  compareAtCents   Int?
+  totalStock       Int              @default(0)
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+  variants         Variant[]
+  images           ProductImage[]
+  docs             ComplianceDoc[]
+  orderItems       OrderItem[]
+
+  @@index([status, categoryId])
+  @@index([status, soldCount])
+  @@index([status, createdAt])
+  @@index([status, priceCents])
+  @@index([supplierId])
+}
+
+model Variant {
+  id             String      @id @default(cuid())
+  productId      String
+  product        Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
+  sku            String      @unique
+  supplierSku    String?
+  options        Json        @default("{}") // { "talla": "M", "color": "Negro" }
+  costCents      Int
+  priceCents     Int
+  compareAtCents Int?
+  stock          Int         @default(0)
+  weightGrams    Int?
+  active         Boolean     @default(true)
+  orderItems     OrderItem[]
+
+  @@index([productId])
+}
+
+model ProductImage {
+  id        String  @id @default(cuid())
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  url       String
+  alt       String  @default("")
+  position  Int     @default(0)
+
+  @@index([productId, position])
+}
+
+model ComplianceDoc {
+  id        String    @id @default(cuid())
+  productId String
+  product   Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
+  type      DocType
+  number    String
+  issuer    String    @default("")
+  issuedAt  DateTime?
+  expiresAt DateTime
+  fileUrl   String
+  review    DocReview @default(PENDING)
+  createdAt DateTime  @default(now())
+
+  @@index([productId])
+  @@index([expiresAt])
+}
+
+model Province {
+  code      String         @id // código corto: "PIC" = Pichincha
+  name      String         @unique
+  region    String // Costa, Sierra, Oriente, Insular
+  rates     ShippingRate[]
+}
+
+model ShippingRate {
+  id           String   @id @default(cuid())
+  provinceCode String
+  province     Province @relation(fields: [provinceCode], references: [code])
+  minGrams     Int      @default(0)
+  maxGrams     Int // el tramo cubre (minGrams, maxGrams]
+  priceCents   Int
+  etaDaysMin   Int      @default(1)
+  etaDaysMax   Int      @default(3)
+
+  @@index([provinceCode, maxGrams])
+}
+
+model Order {
+  id               String        @id @default(cuid())
+  number           String        @unique // CH-100001
+  trackingToken    String        @unique
+  channel          OrderChannel  @default(WEB)
+  utm              Json?
+  status           OrderStatus   @default(NEW)
+  customerName     String
+  idNumber         String // cédula o RUC
+  phone            String
+  email            String?
+  provinceCode     String
+  provinceName     String
+  city             String
+  address          String
+  reference        String
+  notes            String?
+  subtotalCents    Int
+  discountCents    Int           @default(0)
+  shippingCents    Int
+  totalCents       Int
+  taxCents         Int
+  paymentMethod    PaymentMethod @default(COD)
+  privacyConsentAt DateTime
+  consentVersion   String
+  confirmedAt      DateTime?
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+  subOrders        SubOrder[]
+  payments         Payment[]
+  notifications    Notification[]
+
+  @@index([status, createdAt])
+  @@index([phone])
+}
+
+model SubOrder {
+  id                 String      @id @default(cuid())
+  orderId            String
+  order              Order       @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  supplierId         String
+  supplier           Supplier    @relation(fields: [supplierId], references: [id])
+  status             OrderStatus @default(NEW)
+  shippingCents      Int
+  carrier            String?
+  trackingCode       String?
+  supplierNotifiedAt DateTime?
+  dispatchedAt       DateTime?
+  deliveredAt        DateTime?
+  items              OrderItem[]
+
+  @@index([orderId])
+  @@index([supplierId, status])
+}
+
+model OrderItem {
+  id            String   @id @default(cuid())
+  subOrderId    String
+  subOrder      SubOrder @relation(fields: [subOrderId], references: [id], onDelete: Cascade)
+  productId     String
+  product       Product  @relation(fields: [productId], references: [id])
+  variantId     String
+  variant       Variant  @relation(fields: [variantId], references: [id])
+  titleSnapshot String
+  optionsText   String   @default("")
+  qty           Int
+  unitPrice     Int
+  unitCost      Int // congelado para calcular el margen real
+
+  @@index([subOrderId])
+}
+
+model Payment {
+  id         String        @id @default(cuid())
+  orderId    String
+  order      Order         @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  method     PaymentMethod
+  status     PaymentStatus @default(PENDING)
+  gatewayRef String?
+  amount     Int
+  createdAt  DateTime      @default(now())
+
+  @@index([orderId])
+}
+
+model Notification {
+  id        String       @id @default(cuid())
+  orderId   String?
+  order     Order?       @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  channel   NotifChannel
+  to        String
+  template  String
+  payload   Json
+  status    NotifStatus  @default(PENDING)
+  attempts  Int          @default(0)
+  lastError String?
+  sentAt    DateTime?
+  // Reintentos con espera: el procesador solo toma filas cuyo nextAttemptAt ya pasó.
+  nextAttemptAt DateTime   @default(now())
+  createdAt DateTime     @default(now())
+
+  @@index([status, nextAttemptAt])
+}
+
+model Setting {
+  key       String   @id
+  value     Json
+  updatedAt DateTime @updatedAt
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String?
+  entity    String
+  entityId  String
+  action    String
+  diff      Json?
+  createdAt DateTime @default(now())
+
+  @@index([entity, entityId])
+}
+
+// Límite de intentos en base de datos (funciona en serverless sin Redis).
+model RateLimit {
+  key         String   @id
+  count       Int      @default(0)
+  windowStart DateTime @default(now())
+}
